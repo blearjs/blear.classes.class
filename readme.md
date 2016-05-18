@@ -1,5 +1,11 @@
 # blear.classes.class
 
+[![Build Status][travis-img]][travis-url] 
+
+[travis-img]: https://travis-ci.org/blearjs/blear.classes.class.svg?branch=master
+[travis-url]: https://travis-ci.org/blearjs/blear.classes.class
+
+
 ## 静态方法
 
 ### `alias(aliasName, originalName)`
