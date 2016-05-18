@@ -8,7 +8,7 @@
 
 ## 静态方法
 
-### `alias(aliasName, originalName)`
+### `.alias(aliasName, originalName)`
 原型方法的别名。
 ```
 var AA = Class.extend({
@@ -20,7 +20,7 @@ AA.alias('a2', 'a');
 // AA.prototype.a2 === AA.prototype.a
 ```
 
-### `sole()`
+### `.sole()`
 生成唯一的随机值，用于原型受保护的方法、属性，防止继承类将其覆盖。
 ```
 var AA = Class.extend({
@@ -33,7 +33,7 @@ var _protectedProperty = AA.sole();
 var _protectedMethod = AA.sole();
 ```
 
-### `extend(prototype)` 
+### `.extend(prototype)` 
 基于当前类扩展新的子类。
 ```
 var AA = Class.extend({
@@ -47,7 +47,7 @@ var BB = AA.extend({
 // BB 继承了 AA
 ```
 
-### `Super()`
+### `.Super()`
 如果在 `extend` 之后还用到了实例的 `Super` 方法，则需要手动再执行一次。
 
 ```
@@ -74,8 +74,27 @@ BB.Super();
 
 ## 实例方法
 
-### `this.Super([arg, ...])`
+### `#Super([arg, ...])`
 **只能同步调用**，执行父类的构造函数。
 
-### `this.Super.someMethod([arg, ...])`
-**只能同步调用**，执行父类的原型方法。
+### `#Super.someMethod([arg, ...])`
+**只能同步调用，不能在构造函数里调用**，执行父类的原型方法。
+
+```
+var AA = Class.extend({
+    constructor: function () {},
+    a: function () {}
+});
+
+var BB = AA.extend({
+    constructor: function () {
+        // 调用父类构造函数
+        this.Super();
+    },
+    
+    a: function () {
+        // 调用父类原型方法 
+        this.Super.a();
+    }
+});
+```
