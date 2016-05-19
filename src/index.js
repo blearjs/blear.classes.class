@@ -153,9 +153,9 @@ module.exports.extend = function extend(prototype) {
     };
 
     /**
-     * 给原型添加 Super 功能
+     * 给原型注入 Super 功能
      */
-    ChildClass.Super = function () {
+    var injectSuper = function () {
         /**
          * 原型链复原
          */
@@ -180,7 +180,18 @@ module.exports.extend = function extend(prototype) {
         ChildClass.__classSuper__ = true;
     };
 
-    ChildClass.Super();
+    injectSuper();
+
+    
+    /**
+     * 后置添加原型方法
+     * @param protoName {String} 方法名称
+     * @param protoFactory {Function} 方法
+     */
+    ChildClass.method = function (protoName, protoFactory) {
+        ChildClass[protoName] = protoFactory;
+        injectSuper();
+    };
 
     return ChildClass;
 };
