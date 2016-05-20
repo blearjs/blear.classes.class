@@ -221,4 +221,57 @@ describe('测试文件', function () {
         expect(a1).toEqual('i am cloudcome');
         expect(callError).toEqual(true);
     });
+
+    it('undefined prototype', function () {
+        var times = 0;
+
+        try {
+            var A = Class.extend();
+        } catch (err) {
+            times++;
+        }
+
+        expect(times).toEqual(1);
+    });
+
+    it('empty prototype', function () {
+        var times = 0;
+
+        try {
+            var A = Class.extend({});
+        } catch (err) {
+            times++;
+        }
+
+        expect(times).toEqual(1);
+    });
+
+    it('un object prototype', function () {
+        var times = 0;
+
+        try {
+            var A = Class.extend(function () {
+
+            });
+        } catch (err) {
+            times++;
+        }
+
+        expect(times).toEqual(1);
+    });
+
+    it('.method', function () {
+        var A = Class.extend({
+            constructor: function () {
+
+            }
+        });
+
+        A.method('get', function () {
+            return 'get';
+        });
+
+        var a = new A();
+        expect(a.get()).toEqual('get');
+    });
 });
