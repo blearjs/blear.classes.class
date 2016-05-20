@@ -25,6 +25,10 @@ var makeExtend = function (superClass) {
             throw new SyntaxError('原型链不能为空');
         }
 
+        if (!typeis.Object(prototype)) {
+            throw new SyntaxError('原型链必须为一个 Object 实例');
+        }
+
         var ChildClass = prototype.constructor;
 
         if (!typeis.Function(ChildClass) || ChildClass === Object) {
@@ -110,7 +114,7 @@ var makeExtend = function (superClass) {
          * 调用父级的原型属性、方法
          */
         object.each(superClass.prototype, function (superKey, superVal) {
-            if (rePublicKey.test(superKey)) {
+            if (rePublicKey.test(superKey) && superKey !== CONSTRUCTOR_NAME) {
                 if (typeis.Function(superVal)) {
                     ChildClass.parent[superKey] = function (instance/*arguments*/) {
                         var args = access.args(arguments).slice(1);
@@ -123,32 +127,12 @@ var makeExtend = function (superClass) {
         });
 
 
-        // /**
-        //  * 调用父级的构造函数
-        //  * @param instance {Object} 子级实例
-        //  */
-        // ChildClass.superConstruct = function (instance/*arguments*/) {
-        //     var args = access.args(arguments).slice(1);
-        //     superClass.apply(instance, args);
-        // };
-        //
-        //
-        // /**
-        //  * 调用父级原型方法
-        //  * @param instance {Object} 子级实例
-        //  * @param method {String} 原型方法名称
-        //  * @returns {*}
-        //  */
-        // ChildClass.superCall = function (instance, method/*arguments*/) {
-        //     var superMethod = superClass.prototype[method];
-        //
-        //     if (!typeis.Function(superMethod)) {
-        //         throw new ReferenceError(superClass.className + '.' + method + ' 原型方法不存在');
-        //     }
-        //
-        //     var args = access.args(arguments).slice(2);
-        //     return superMethod.apply(instance, args);
-        // };
+        /**
+         * 原来的原型
+         */
+        object.each(prototype, function (protoKey, protoVal) {
+            ChildClass.prototype[protoKey] = protoVal;
+        });
 
 
         /**

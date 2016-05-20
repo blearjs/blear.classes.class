@@ -196,8 +196,10 @@ describe('测试文件', function () {
             return 'i am ' + name;
         };
 
-        var B = A.extend(function () {
-            B.parent();
+        var B = A.extend({
+            constructor: function () {
+                B.parent();
+            }
         });
 
         B.prototype.say = function (name) {
