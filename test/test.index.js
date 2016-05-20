@@ -57,7 +57,7 @@ describe('测试文件', function () {
         };
         var BB = AA.extend({
             constructor: function BB(aa, bb) {
-                this.Super(aa);
+                BB.parent(this, aa);
                 this._bb = bb;
             },
             getBB: function () {
@@ -68,33 +68,33 @@ describe('测试文件', function () {
                 return this._aa.toUpperCase();
             },
             destroy: function () {
-                this.Super.destroy();
+                BB.parent.destroy(this);
                 this._bb = '';
             }
         });
         var CC = BB.extend({
             constructor: function CC(aa, bb, cc) {
-                this.Super(aa, bb);
+                CC.parent(this, aa, bb);
                 this._cc = cc;
             },
             getCC: function () {
                 return this._cc;
             },
             destroy: function () {
-                this.Super.destroy();
+                CC.parent.destroy(this);
                 this._cc = '';
             }
         });
         var DD = CC.extend({
             constructor: function (aa, bb, cc, dd) {
-                this.Super(aa, bb, cc);
+                DD.parent(this, aa, bb, cc);
                 this._dd = dd;
             },
             getDD: function () {
                 return this._dd;
             },
             destroy: function () {
-                this.Super.destroy();
+                DD.parent.destroy(this);
                 this._dd = '';
             }
         });
@@ -197,11 +197,11 @@ describe('测试文件', function () {
         };
 
         var B = A.extend(function () {
-            this.Super();
+            B.parent();
         });
 
         B.prototype.say = function (name) {
-            return 'A say: "' + this.Super.saySomeThing(name) + '"';
+            return 'A say: "' + B.parent.saySomeThing(this, name) + '"';
         };
 
         var a = new A();

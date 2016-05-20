@@ -47,9 +47,7 @@ var BB = AA.extend({
 // BB 继承了 AA
 ```
 
-### `.Super()`
-如果在 `extend` 之后还用到了实例的 `Super` 方法，则需要手动再执行一次。
-
+### `.superConstruct(instance, [arg1, arg2])`、`superCall(instance, method, [arg1, arg2])`
 ```
 var AA = Class.extend({
     constructor: function () {},
@@ -59,42 +57,14 @@ var AA = Class.extend({
 var BB = AA.extend({
     constructor: function () {
         // 调用父类构造函数
-        this.Super();
+        BB.superConstruct(this);
     }
 });
 
 BB.protyotype.b = function () {
-    // 在 extend 之后调用 Super
-    this.Super.a();
-    // ...
+    // 调用父类原型 a 方法
+    BB.superCall(this, 'a');
 };
-
-BB.Super();
 ```
 
 ## 实例方法
-
-### `#Super([arg, ...])`
-**只能同步调用**，执行父类的构造函数。
-
-### `#Super.someMethod([arg, ...])`
-**只能同步调用，不能在构造函数里调用**，执行父类的原型方法。
-
-```
-var AA = Class.extend({
-    constructor: function () {},
-    a: function () {}
-});
-
-var BB = AA.extend({
-    constructor: function () {
-        // 调用父类构造函数
-        this.Super();
-    },
-    
-    a: function () {
-        // 调用父类原型方法 
-        this.Super.a();
-    }
-});
-```
