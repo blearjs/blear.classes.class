@@ -55,7 +55,7 @@ var BB = AA.extend({
 // BB 继承了 AA
 ```
 
-### `.superConstruct(instance, [arg1, arg2])`、`superCall(instance, method, [arg1, arg2])`
+### `.parent(instance, [arg1, arg2])`、`parent[method](instance, [arg1, arg2])`
 ```
 var AA = Class.extend({
     constructor: function () {},
@@ -65,14 +65,25 @@ var AA = Class.extend({
 var BB = AA.extend({
     constructor: function () {
         // 调用父类构造函数
-        BB.superConstruct(this);
+        BB.parent(this);
     }
 });
 
 BB.protyotype.b = function () {
     // 调用父类原型 a 方法
-    BB.superCall(this, 'a');
+    BB.parent.a(this);
 };
 ```
 
-## 实例方法
+
+## `.method(protoName, factory)`
+```
+var A = Class.extend({
+    constructor: function () {}
+});
+
+A.method('get', function () {
+    return 'get';
+});
+```
+
