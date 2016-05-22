@@ -274,4 +274,33 @@ describe('测试文件', function () {
         var a = new A();
         expect(a.get()).toEqual('get');
     });
+
+    it('.ify', function () {
+        Class.ify(Function);
+        Class.ify(Function);
+        var B = Function.extend({
+            constructor: function (a, b) {
+                B.parent(this);
+                this.b = b;
+            }
+        });
+
+        var b = new B(1, 2);
+
+        expect(b.length).toEqual(0);
+        expect(b.b).toEqual(2);
+    });
+
+    it('.ify not function', function () {
+        var A;
+        var times = 0;
+
+        try {
+            Class.ify(A);
+        } catch (err) {
+            times++;
+        }
+
+        expect(times).toEqual(1);
+    });
 });

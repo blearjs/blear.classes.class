@@ -76,7 +76,7 @@ BB.protyotype.b = function () {
 ```
 
 
-## `.method(protoName, factory)`
+### `.method(protoName, factory)`
 ```
 var A = Class.extend({
     constructor: function () {}
@@ -85,5 +85,15 @@ var A = Class.extend({
 A.method('get', function () {
     return 'get';
 });
+```
+
+
+### `.ify(constructor)`
+转换构造函数，添加 extend 方法
+```
+var A = function(){};
+
+A = Class.ify(A);
+A.extend(...);
 ```
 

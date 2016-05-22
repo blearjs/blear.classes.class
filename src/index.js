@@ -18,8 +18,18 @@ var random = require('blear.utils.random');
 var classId = 0;
 var rePublicKey = /^[a-zA-Z_][a-zA-Z\d]*$/;
 var CONSTRUCTOR_NAME = 'constructor';
+var CLASSIFY_NAME = '__classify__';
 
 var makeExtend = function (superClass) {
+    if (superClass[CLASSIFY_NAME] && superClass.extend) {
+        return superClass.extend;
+    }
+
+    superClass[CLASSIFY_NAME] = true;
+    superClass.classId = superClass.prototype.classId
+        = superClass.classId || superClass.prototype.classId || classId++;
+    superClass.className = superClass.prototype.className
+        = superClass.className || superClass.prototype.className || fun.name(superClass);
     return function extend(prototype) {
         if (!prototype) {
             throw new SyntaxError('原型链不能为空');
@@ -174,6 +184,20 @@ Class.prototype = {
     classId: Class.classId,
     className: Class.className,
     superClass: Class.superClass
+};
+/**
+ * Class 化
+ * @param constructor {Function} 构造函数
+ * @returns {*}
+ */
+Class.ify = function (constructor) {
+    if (!typeis.Function(constructor)) {
+        console.log(typeis(constructor));
+        throw new SyntaxError('ify constructor 必须是构造函数');
+    }
+
+    constructor.extend = makeExtend(constructor);
+    return constructor;
 };
 
 
