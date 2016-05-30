@@ -185,7 +185,7 @@ describe('测试文件', function () {
         expect(typeof a[_wrapName]).toEqual('function');
     });
 
-    it('.Super', function () {
+    it('.parent', function () {
         var A = Class.extend({
             constructor: function () {
 
@@ -198,7 +198,7 @@ describe('测试文件', function () {
 
         var B = A.extend({
             constructor: function () {
-                B.parent();
+                B.parent(this);
             }
         });
 
@@ -220,6 +220,62 @@ describe('测试文件', function () {
 
         expect(a1).toEqual('i am cloudcome');
         expect(callError).toEqual(true);
+    });
+
+    it('.parent constructor no instance', function () {
+        var A = Class.extend({
+            constructor: function () {
+
+            }
+        });
+
+        var B = A.extend({
+            constructor: function () {
+                B.parent();
+            }
+        });
+
+        var errTimes = 0;
+
+        try {
+            new B();
+        } catch (err) {
+            errTimes++;
+        }
+
+        expect(errTimes).toEqual(1);
+    });
+
+    it('.parent prototype no instance', function () {
+        var A = Class.extend({
+            constructor: function () {
+
+            },
+
+            aa: function () {
+
+            }
+        });
+
+        var B = A.extend({
+            constructor: function () {
+                B.parent(this);
+            },
+
+            aa: function () {
+                B.parent.aa();
+            }
+        });
+
+        var errTimes = 0;
+
+        try {
+            new B().aa();
+        } catch (err) {
+            errTimes++;
+        }
+
+        expect(errTimes).toEqual(1);
     });
 
     it('undefined prototype', function () {

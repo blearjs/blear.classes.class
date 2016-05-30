@@ -115,6 +115,10 @@ var makeExtend = function (superClass) {
          * @param instance {Object} 子级实例
          */
         ChildClass.parent = function (instance/*arguments*/) {
+            if (!instance || !instance.classId) {
+                throw new SyntaxError('调用父级构造方法时，必须传递当前实例。');
+            }
+
             var args = access.args(arguments).slice(1);
             superClass.apply(instance, args);
         };
@@ -127,6 +131,10 @@ var makeExtend = function (superClass) {
             if (rePublicKey.test(superKey) && superKey !== CONSTRUCTOR_NAME) {
                 if (typeis.Function(superVal)) {
                     ChildClass.parent[superKey] = function (instance/*arguments*/) {
+                        if (!instance || !instance.classId) {
+                            throw new SyntaxError('调用父级原型方法时，必须传递当前实例。');
+                        }
+
                         var args = access.args(arguments).slice(1);
                         return superVal.apply(instance, args);
                     };
