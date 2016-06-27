@@ -185,16 +185,40 @@ describe('测试文件', function () {
         expect(typeof a[_wrapName]).toEqual('function');
     });
 
-    it('.parent', function () {
+    it('.superInvoke 1', function () {
         var A = Class.extend({
             constructor: function () {
 
+            },
+
+            a: function () {
+                return 'a';
             }
         });
 
-        A.prototype.say = function (name) {
-            return 'i am ' + name;
-        };
+        var B = A.extend({
+            constructor: function () {
+                B.parent(this);
+            },
+            a: function () {
+                return B.superInvoke('a', this) + '/';
+            }
+        });
+
+        var b = new B();
+        expect(b.a()).toEqual('a/');
+    });
+
+    it('.superInvoke 2', function () {
+        var A = Class.extend({
+            constructor: function () {
+
+            },
+
+            a: function () {
+                return 'a';
+            }
+        });
 
         var B = A.extend({
             constructor: function () {
@@ -202,24 +226,17 @@ describe('测试文件', function () {
             }
         });
 
-        B.prototype.say = function (name) {
-            return 'A say: "' + B.parent.saySomeThing(this, name) + '"';
-        };
+        var C = B.extend({
+            constructor: function () {
+                C.parent(this);
+            },
+            a: function () {
+                return C.superInvoke('a', this) + '/';
+            }
+        });
 
-        var a = new A();
-        var b = new B();
-        var callError = false;
-
-        var a1 = a.say('cloudcome');
-        try {
-            var b1 = b.say('cloudcome');
-        } catch (err) {
-            console.log(err);
-            callError = true;
-        }
-
-        expect(a1).toEqual('i am cloudcome');
-        expect(callError).toEqual(true);
+        var c = new C();
+        expect(c.a()).toEqual('a/');
     });
 
     it('.parent constructor no instance', function () {
@@ -239,38 +256,6 @@ describe('测试文件', function () {
 
         try {
             new B();
-        } catch (err) {
-            errTimes++;
-        }
-
-        expect(errTimes).toEqual(1);
-    });
-
-    it('.parent prototype no instance', function () {
-        var A = Class.extend({
-            constructor: function () {
-
-            },
-
-            aa: function () {
-
-            }
-        });
-
-        var B = A.extend({
-            constructor: function () {
-                B.parent(this);
-            },
-
-            aa: function () {
-                B.parent.aa();
-            }
-        });
-
-        var errTimes = 0;
-
-        try {
-            new B().aa();
         } catch (err) {
             errTimes++;
         }
