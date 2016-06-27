@@ -1,6 +1,6 @@
 {
   "name": "blear.classes.class",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "类的继承",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",

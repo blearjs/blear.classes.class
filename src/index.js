@@ -125,6 +125,28 @@ var makeExtend = function (superClass) {
 
 
         /**
+         * 调用祖先的原型方法
+         * @param method {String} 原型方法名称
+         * @param instance {*} 实例
+         * @returns {*}
+         */
+        ChildClass.superInvoke = function (method, instance/*arguments*/) {
+            if (!instance || !instance.classId) {
+                throw new SyntaxError('调用父级构造方法时，必须传递当前实例。');
+            }
+
+            var fn = superClass.prototype[method];
+
+            if (!typeis.Function(fn)) {
+                throw new ReferenceError('未找到父级的`' + method + '`原型方法');
+            }
+
+            var args = access.args(arguments).slice(2);
+            return fn.apply(instance, args)
+        };
+
+
+        /**
          * 调用父级的原型属性、方法
          */
         object.each(superClass.prototype, function (superKey, superVal) {
@@ -133,6 +155,10 @@ var makeExtend = function (superClass) {
                     ChildClass.parent[superKey] = function (instance/*arguments*/) {
                         if (!instance || !instance.classId) {
                             throw new SyntaxError('调用父级原型方法时，必须传递当前实例。');
+                        }
+
+                        if (DEBUG) {
+                            console.warn('不建议使用 parent 来调用祖先原型方法，请使用`.superInvoke`代替');
                         }
 
                         var args = access.args(arguments).slice(1);
