@@ -106,7 +106,7 @@ var makeExtend = function (superClass) {
          * @param protoFactory {Function} 方法
          */
         ChildClass.method = function (protoName, protoFactory) {
-            if (DEBUG) {
+            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
                 console.warn('不建议使用 `.method` 来添加原型，' +
                     '请使用 `XXX.prototype.xxx` 代替。' +
                     '该方法将在下个版本被废除');
@@ -163,7 +163,7 @@ var makeExtend = function (superClass) {
                             throw new SyntaxError('调用父级原型方法时，必须传递当前实例。');
                         }
 
-                        if (DEBUG) {
+                        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
                             console.warn('不建议使用 `.parent` 来调用祖先原型方法，' +
                                 '请使用 `.superInvoke` 代替。' +
                                 '该方法将在下个版本被废除');
