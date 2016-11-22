@@ -101,22 +101,6 @@ var makeExtend = function (superClass) {
 
 
         /**
-         * 后置添加原型方法
-         * @param protoName {String} 方法名称
-         * @param protoFactory {Function} 方法
-         */
-        ChildClass.method = function (protoName, protoFactory) {
-            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-                console.warn('不建议使用 `.method` 来添加原型，' +
-                    '请使用 `XXX.prototype.xxx` 代替。' +
-                    '该方法将在下个版本被废除');
-            }
-
-            ChildClass.prototype[protoName] = protoFactory;
-        };
-
-
-        /**
          * 调用父级的构造函数
          * @param instance {Object} 子级实例
          */
@@ -127,6 +111,13 @@ var makeExtend = function (superClass) {
 
             var args = access.args(arguments).slice(1);
             superClass.apply(instance, args);
+
+            // 向上传递错误实例的错误堆栈
+            try {
+                Error.captureStackTrace(instance, ChildClass);
+            } catch (err) {
+                // ignore
+            }
         };
 
 
@@ -150,33 +141,6 @@ var makeExtend = function (superClass) {
             var args = access.args(arguments).slice(2);
             return fn.apply(instance, args)
         };
-
-
-        /**
-         * 调用父级的原型属性、方法
-         */
-        object.each(superClass.prototype, function (superKey, superVal) {
-            if (rePublicKey.test(superKey) && superKey !== CONSTRUCTOR_NAME) {
-                if (typeis.Function(superVal)) {
-                    ChildClass.parent[superKey] = function (instance/*arguments*/) {
-                        if (!instance || !instance.classId) {
-                            throw new SyntaxError('调用父级原型方法时，必须传递当前实例。');
-                        }
-
-                        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-                            console.warn('不建议使用 `.parent` 来调用祖先原型方法，' +
-                                '请使用 `.superInvoke` 代替。' +
-                                '该方法将在下个版本被废除');
-                        }
-
-                        var args = access.args(arguments).slice(1);
-                        return superVal.apply(instance, args);
-                    };
-                } else {
-                    ChildClass.parent[superKey] = superVal;
-                }
-            }
-        });
 
 
         /**

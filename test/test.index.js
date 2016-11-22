@@ -68,7 +68,7 @@ describe('测试文件', function () {
                 return this._aa.toUpperCase();
             },
             destroy: function () {
-                BB.parent.destroy(this);
+                BB.superInvoke('destroy', this);
                 this._bb = '';
             }
         });
@@ -81,7 +81,7 @@ describe('测试文件', function () {
                 return this._cc;
             },
             destroy: function () {
-                CC.parent.destroy(this);
+                CC.superInvoke('destroy', this);
                 this._cc = '';
             }
         });
@@ -94,7 +94,7 @@ describe('测试文件', function () {
                 return this._dd;
             },
             destroy: function () {
-                DD.parent.destroy(this);
+                DD.superInvoke('destroy', this);
                 this._dd = '';
             }
         });
@@ -299,21 +299,6 @@ describe('测试文件', function () {
         }
 
         expect(times).toEqual(1);
-    });
-
-    it('.method', function () {
-        var A = Class.extend({
-            constructor: function () {
-
-            }
-        });
-
-        A.method('get', function () {
-            return 'get';
-        });
-
-        var a = new A();
-        expect(a.get()).toEqual('get');
     });
 
     it('.ify', function () {
