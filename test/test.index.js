@@ -13,6 +13,7 @@ describe('测试文件', function () {
     it('.extend', function (done) {
         var AA = Class.extend({
             constructor: function (aa) {
+                AA.parent(this);
                 this.aa = aa;
             }
         });
@@ -24,6 +25,7 @@ describe('测试文件', function () {
         var BB = Class.extend({
             constructor: function (bb) {
                 this.bb = bb;
+                BB.parent(this);
             },
             getBB: function () {
                 return this.bb;
@@ -47,6 +49,7 @@ describe('测试文件', function () {
         var AA = Class.extend({
             constructor: function AA(aa) {
                 this._aa = aa;
+                AA.parent(this);
             }
         });
         AA.prototype.getAA = function () {
@@ -68,7 +71,7 @@ describe('测试文件', function () {
                 return this._aa.toUpperCase();
             },
             destroy: function () {
-                BB.superInvoke('destroy', this);
+                BB.invoke('destroy', this);
                 this._bb = '';
             }
         });
@@ -81,7 +84,7 @@ describe('测试文件', function () {
                 return this._cc;
             },
             destroy: function () {
-                CC.superInvoke('destroy', this);
+                CC.invoke('destroy', this);
                 this._cc = '';
             }
         });
@@ -94,7 +97,7 @@ describe('测试文件', function () {
                 return this._dd;
             },
             destroy: function () {
-                DD.superInvoke('destroy', this);
+                DD.invoke('destroy', this);
                 this._dd = '';
             }
         });
@@ -146,27 +149,11 @@ describe('测试文件', function () {
         done();
     });
 
-    it('.alias', function () {
-        var A = Class.extend({
-            constructor: function A(name) {
-                this.name = name;
-            },
-            say: function () {
-                return this.name;
-            }
-        });
-
-        A.alias('speak', 'say');
-
-        var a = new A('a');
-
-        expect(a.say()).toEqual(a.speak());
-    });
-
     it('.sole', function () {
         var A = Class.extend({
             constructor: function A(name) {
                 this.name = name;
+                A.parent(this);
             },
             say: function () {
                 return this[_wrapName](this.name);
@@ -185,10 +172,10 @@ describe('测试文件', function () {
         expect(typeof a[_wrapName]).toEqual('function');
     });
 
-    it('.superInvoke 1', function () {
+    it('#invoke 1', function () {
         var A = Class.extend({
             constructor: function () {
-
+                A.parent(this);
             },
 
             a: function () {
@@ -201,7 +188,7 @@ describe('测试文件', function () {
                 B.parent(this);
             },
             a: function () {
-                return B.superInvoke('a', this) + '/';
+                return B.invoke('a', this) + '/';
             }
         });
 
@@ -209,10 +196,10 @@ describe('测试文件', function () {
         expect(b.a()).toEqual('a/');
     });
 
-    it('.superInvoke 2', function () {
+    it('#invoke 2', function () {
         var A = Class.extend({
             constructor: function () {
-
+                A.parent(this);
             },
 
             a: function () {
@@ -231,7 +218,7 @@ describe('测试文件', function () {
                 C.parent(this);
             },
             a: function () {
-                return C.superInvoke('a', this) + '/';
+                return C.invoke('a', this) + '/';
             }
         });
 
@@ -239,10 +226,46 @@ describe('测试文件', function () {
         expect(c.a()).toEqual('a/');
     });
 
+    it('#invoke 3', function () {
+        var A = Class.extend({
+            constructor: function () {
+                A.parent(this);
+            },
+
+            a: function () {
+                return 'a';
+            }
+        });
+
+        var B = A.extend({
+            constructor: function () {
+                B.parent(this);
+            }
+        });
+
+        var C = B.extend({
+            constructor: function () {
+                C.parent(this);
+            }
+        });
+
+        var D = C.extend({
+            constructor: function () {
+                D.parent(this);
+            },
+            a: function () {
+                return D.invoke('a', this) + '/';
+            }
+        });
+
+        var d = new D();
+        expect(d.a()).toEqual('a/');
+    });
+
     it('.parent constructor no instance', function () {
         var A = Class.extend({
             constructor: function () {
-
+                A.parent(this);
             }
         });
 
@@ -328,5 +351,20 @@ describe('测试文件', function () {
         }
 
         expect(times).toEqual(1);
+    });
+
+    it('not call parent', function () {
+        var foundErr;
+        try {
+            var A = Class.extend({
+                constructor: function () {
+
+                }
+            });
+        } catch (err) {
+            foundErr = err;
+        }
+
+        expect(Boolean(foundErr)).toBe(true);
     });
 });

@@ -16,9 +16,10 @@ var fun = require('blear.utils.function');
 var random = require('blear.utils.random');
 
 var classId = 0;
-var rePublicKey = /^[a-zA-Z_][a-zA-Z\d]*$/;
-var CONSTRUCTOR_NAME = 'constructor';
+// var rePublicKey = /^[a-zA-Z_][a-zA-Z\d]*$/;
+// var CONSTRUCTOR_NAME = 'constructor';
 var CLASSIFY_NAME = '__classify__';
+var reParentCall = /\.parent\(/;
 
 var makeExtend = function (superClass) {
     if (superClass[CLASSIFY_NAME] && superClass.extend) {
@@ -40,6 +41,10 @@ var makeExtend = function (superClass) {
         }
 
         var ChildClass = prototype.constructor;
+
+        if(!reParentCall.test(ChildClass.toString())) {
+            throw new SyntaxError('请手动使用`ChildClass.parent(this, arg0, arg1, ...)`调用父类');
+        }
 
         if (!typeis.Function(ChildClass) || ChildClass === Object) {
             throw new SyntaxError('原型链的构造函数不能为空');
@@ -82,16 +87,6 @@ var makeExtend = function (superClass) {
 
 
         /**
-         * 类的别名
-         * @param aliasName {String} 别名
-         * @param originalName {String} 原名
-         */
-        ChildClass.alias = function alias(aliasName, originalName) {
-            ChildClass.prototype[aliasName] = ChildClass.prototype[originalName]
-        };
-
-
-        /**
          * 生成类唯一识别号，用于创建保护属性名
          * @returns {string}
          */
@@ -111,31 +106,21 @@ var makeExtend = function (superClass) {
 
             var args = access.args(arguments).slice(1);
             superClass.apply(instance, args);
-
-            // 向上传递错误实例的错误堆栈
-            try {
-                Error.captureStackTrace(instance, ChildClass);
-            } catch (err) {
-                // ignore
-            }
         };
 
 
         /**
-         * 调用祖先的原型方法
-         * @param method {String} 原型方法名称
-         * @param instance {*} 实例
+         * 调用祖先原型方法
+         * @param method {String} 方法名称
+         * @param instance {Object} 实例
          * @returns {*}
          */
-        ChildClass.superInvoke = function (method, instance/*arguments*/) {
-            if (!instance || !instance.classId) {
-                throw new SyntaxError('调用父级构造方法时，必须传递当前实例。');
-            }
-
+        ChildClass.invoke = function (method, instance/*arguments*/) {
+            // 这里会自动向祖先查找原型方法
             var fn = superClass.prototype[method];
 
             if (!typeis.Function(fn)) {
-                throw new ReferenceError('未找到父级的`' + method + '`原型方法');
+                throw new ReferenceError('未找到祖先的`' + method + '`原型方法');
             }
 
             var args = access.args(arguments).slice(2);
