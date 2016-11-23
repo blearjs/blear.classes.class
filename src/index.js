@@ -1,8 +1,9 @@
 /**
  * 类的继承
  * @author ydr.me
- * @create 2014-10-04 15:09
+ * @create 2014年10月04日15:09:02
  * @update 2016年04月22日01:41:01
+ * @update 2016年11月23日11:23:54
  */
 
 'use strict';
@@ -12,7 +13,6 @@ require('blear.polyfills.object');
 var access = require('blear.utils.access');
 var typeis = require('blear.utils.typeis');
 var object = require('blear.utils.object');
-var fun = require('blear.utils.function');
 var random = require('blear.utils.random');
 
 var classId = 0;
@@ -29,20 +29,25 @@ var makeExtend = function (superClass) {
     superClass[CLASSIFY_NAME] = true;
     superClass.classId = superClass.prototype.classId
         = superClass.classId || superClass.prototype.classId || classId++;
-    superClass.className = superClass.prototype.className
-        = superClass.className || superClass.prototype.className || fun.name(superClass);
+    superClass.className = superClass.prototype.className;
     return function extend(prototype) {
         if (!prototype) {
             throw new SyntaxError('原型链不能为空');
         }
 
-        if (!typeis.Object(prototype)) {
-            throw new SyntaxError('原型链必须为一个 Object 实例');
+        if (!typeis.Object(prototype) && !typeis.Function(prototype)) {
+            throw new SyntaxError('原型链必须为一个 Object/Function 实例');
+        }
+
+        if (typeis.Function(prototype)) {
+            prototype = {
+                constructor: prototype
+            };
         }
 
         var ChildClass = prototype.constructor;
 
-        if(!reParentCall.test(ChildClass.toString())) {
+        if (!reParentCall.test(ChildClass.toString())) {
             throw new SyntaxError('请手动使用`ChildClass.parent(this, arg0, arg1, ...)`调用父类');
         }
 
@@ -69,7 +74,7 @@ var makeExtend = function (superClass) {
          * 类的名称
          * @type {*|string}
          */
-        ChildClass.className = prototype.className = prototype.className || fun.name(ChildClass);
+        ChildClass.className = prototype.className;
 
 
         /**
@@ -106,6 +111,13 @@ var makeExtend = function (superClass) {
 
             var args = access.args(arguments).slice(1);
             superClass.apply(instance, args);
+
+            // 向上传递错误实例的错误堆栈
+            try {
+                Error.captureStackTrace(instance, ChildClass);
+            } catch (err) {
+                // ignore
+            }
         };
 
 

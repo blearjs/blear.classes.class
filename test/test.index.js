@@ -45,6 +45,56 @@ describe('测试文件', function () {
         done();
     });
 
+    it('.extend:function', function () {
+        var AA = Class.extend(function () {
+            AA.parent(this);
+            this.aa = 'aa';
+        });
+
+        var BB = AA.extend(function () {
+            BB.parent(this);
+        });
+
+        var CC = BB.extend(function () {
+            CC.parent(this);
+        });
+
+        var DD = CC.extend(function () {
+            DD.parent(this);
+        });
+
+        var dd = new DD();
+        expect(dd.aa).toBe('aa');
+    });
+
+    it('.extend:mix', function () {
+        var AA = Class.extend(function () {
+            AA.parent(this);
+            this.aa = 'aa';
+        });
+
+        var BB = AA.extend(function () {
+            BB.parent(this);
+        });
+
+        var CC = BB.extend({
+            constructor: function () {
+                CC.parent(this);
+            },
+            sayAA: function () {
+                return this.aa;
+            }
+        });
+
+        var DD = CC.extend(function () {
+            DD.parent(this);
+        });
+
+        var dd = new DD();
+        expect(dd.aa).toBe('aa');
+        expect(dd.sayAA()).toBe('aa');
+    });
+
     it('.extend:multiple', function (done) {
         var AA = Class.extend({
             constructor: function AA(aa) {
@@ -310,13 +360,11 @@ describe('测试文件', function () {
         expect(times).toEqual(1);
     });
 
-    it('un object prototype', function () {
+    it('un object/function prototype', function () {
         var times = 0;
 
         try {
-            var A = Class.extend(function () {
-
-            });
+            var A = Class.extend(1);
         } catch (err) {
             times++;
         }
@@ -365,6 +413,44 @@ describe('测试文件', function () {
             foundErr = err;
         }
 
+        console.log(foundErr);
         expect(Boolean(foundErr)).toBe(true);
+    });
+
+    it('invoke error', function () {
+        var A = Class.extend({
+            constructor: function () {
+                A.parent(this);
+            },
+
+            say: function () {
+                return __abc___def__();
+            }
+        });
+
+        var B = A.extend({
+            constructor: function () {
+                B.parent(this);
+            }
+        });
+
+        var C = B.extend({
+            constructor: function () {
+                ___mmm___nnn___();
+                C.parent(this);
+            }
+        });
+
+        var D = C.extend({
+            constructor: function () {
+                D.parent(this);
+            }
+        });
+
+        try {
+            var d1 = new D();
+        } catch (err) {
+            console.log(err.stack);
+        }
     });
 });
