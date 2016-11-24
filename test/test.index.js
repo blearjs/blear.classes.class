@@ -401,22 +401,6 @@ describe('测试文件', function () {
         expect(times).toEqual(1);
     });
 
-    it('not call parent', function () {
-        var foundErr;
-        try {
-            var A = Class.extend({
-                constructor: function () {
-
-                }
-            });
-        } catch (err) {
-            foundErr = err;
-        }
-
-        console.log(foundErr);
-        expect(Boolean(foundErr)).toBe(true);
-    });
-
     it('invoke error', function () {
         var A = Class.extend({
             constructor: function () {
@@ -452,5 +436,29 @@ describe('测试文件', function () {
         } catch (err) {
             console.log(err.stack);
         }
+    });
+
+    it('.superInvoke', function () {
+        var A = Class.extend(function () {
+
+        });
+
+        A.prototype.say = function () {
+            return 'a';
+        };
+
+        var B = A.extend({
+            constructor: function () {
+
+            },
+
+            say: function () {
+                return B.superInvoke('say', this) + 'b';
+            }
+        });
+
+        var b = new B();
+
+        expect(b.say()).toBe('ab');
     });
 });

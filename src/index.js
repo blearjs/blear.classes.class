@@ -14,12 +14,13 @@ var access = require('blear.utils.access');
 var typeis = require('blear.utils.typeis');
 var object = require('blear.utils.object');
 var random = require('blear.utils.random');
+var debug = require('blear.utils.debug');
 
 var classId = 0;
 // var rePublicKey = /^[a-zA-Z_][a-zA-Z\d]*$/;
 // var CONSTRUCTOR_NAME = 'constructor';
 var CLASSIFY_NAME = '__classify__';
-var reParentCall = /\.parent\(/;
+// var reParentCall = /\.parent\(/;
 
 var makeExtend = function (superClass) {
     if (superClass[CLASSIFY_NAME] && superClass.extend) {
@@ -46,10 +47,6 @@ var makeExtend = function (superClass) {
         }
 
         var ChildClass = prototype.constructor;
-
-        if (!reParentCall.test(ChildClass.toString())) {
-            throw new SyntaxError('请手动使用`ChildClass.parent(this, arg0, arg1, ...)`调用父类');
-        }
 
         if (!typeis.Function(ChildClass) || ChildClass === Object) {
             throw new SyntaxError('原型链的构造函数不能为空');
@@ -138,6 +135,9 @@ var makeExtend = function (superClass) {
             var args = access.args(arguments).slice(2);
             return fn.apply(instance, args)
         };
+
+
+        ChildClass.superInvoke = debug.deprecate(ChildClass.invoke, '使用`.invoke`方法代替');
 
 
         /**
