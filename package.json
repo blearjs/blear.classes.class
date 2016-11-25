@@ -1,6 +1,6 @@
 {
   "name": "blear.classes.class",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "类的继承",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
@@ -41,6 +41,7 @@
     "blear.utils.access": "1.x",
     "blear.utils.typeis": "1.x",
     "blear.utils.object": "1.x",
+    "blear.utils.debug": "1.x",
     "blear.utils.random": "1.x"
   },
   "devDependencies": {
