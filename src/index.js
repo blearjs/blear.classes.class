@@ -9,7 +9,6 @@
 'use strict';
 
 
-require('blear.polyfills.object');
 var access = require('blear.utils.access');
 var typeis = require('blear.utils.typeis');
 var object = require('blear.utils.object');
