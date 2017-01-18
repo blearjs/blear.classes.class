@@ -92,7 +92,7 @@ var makeExtend = function (superClass) {
          * @returns {string}
          */
         ChildClass.sole = function sole() {
-            return '__' + ChildClass.className + '_' + random.guid();
+            return '_' + ChildClass.className + '_' + random.guid();
         };
 
 
@@ -136,7 +136,7 @@ var makeExtend = function (superClass) {
         };
 
 
-        ChildClass.superInvoke = debug.deprecate(ChildClass.invoke, '使用`.invoke`方法代替');
+        ChildClass.superInvoke = debug.deprecate(ChildClass.invoke, '使用 `.invoke` 方法代替');
 
 
         /**
@@ -174,7 +174,7 @@ var makeExtend = function (superClass) {
  *
  * @class Class
  */
-var Class = module.exports = function Class() {
+var Class = function Class() {
     // Class constructor
 };
 
@@ -210,4 +210,5 @@ Class.ify = function (constructor) {
  * @param [prototype.className="anonymous"] {String} 类的命令
  * @returns {constructor}
  */
-module.exports.extend = makeExtend(Class);
+Class.extend = makeExtend(Class);
+module.exports = Class;
