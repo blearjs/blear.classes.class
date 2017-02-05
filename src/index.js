@@ -187,6 +187,7 @@ Class.prototype = {
     className: Class.className,
     superClass: Class.superClass
 };
+
 /**
  * Class 化
  * @param constructor {Function} 构造函数
@@ -194,7 +195,6 @@ Class.prototype = {
  */
 Class.ify = function (constructor) {
     if (!typeis.Function(constructor)) {
-        console.log(typeis(constructor));
         throw new SyntaxError('ify constructor 必须是构造函数');
     }
 
@@ -202,6 +202,18 @@ Class.ify = function (constructor) {
     return constructor;
 };
 
+/**
+ * 判断是否为 Class 扩展类
+ * @param constructor
+ * @returns {boolean}
+ */
+Class.is = function (constructor) {
+    if (!typeis.Function(constructor)) {
+        return false;
+    }
+
+    return Boolean(constructor[CLASSIFY_NAME]);
+};
 
 /**
  * 类的继承

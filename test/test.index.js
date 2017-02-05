@@ -381,11 +381,16 @@ describe('测试文件', function () {
                 this.b = b;
             }
         });
+        var C = function () {
+
+        };
 
         var b = new B(1, 2);
 
         expect(b.length).toEqual(0);
         expect(b.b).toEqual(2);
+        expect(Class.is(B)).toBe(true);
+        expect(Class.is(C)).toBe(false);
     });
 
     it('.ify not function', function () {
